@@ -1,36 +1,33 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+from datetime import datetime  
 
 
-URL = 'https://www.etsy.com/shop/PearlPrestigePlanner'
-header = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36"}
-sayfa = requests.get(URL, headers = header)
-icerik = BeautifulSoup(sayfa.content,'html.parser')
-    #print(icerik)
-    #productTitle
+def salechecker():
+  URL = 'https://www.etsy.com/shop/PearlPrestigePlanner'
+  header = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36"}
+  sayfa = requests.get(URL, headers = header)
+  contentparser = BeautifulSoup(sayfa.content,'html.parser')
+ 
+#we are going to find store name with the code below
+  dukkanadi = contentparser.find("h1", {"class":"wt-text-heading-01 wt-text-truncate"}).text
 
-dukkanadi = icerik.find("h1", {"class":"wt-text-heading-01 wt-text-truncate"}).text
-#print(dukkanadi)
+#we are going to find sale numbers with the code below
+  satisadet = contentparser.find("span", {"class":"wt-text-caption wt-no-wrap"}).text.split()
 
-    #priceblock_ourprice
+  satisstr = satisadet[0].replace(',','')
+  
+#finding the date
+  tarih = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+  print(f"{dukkanadi} Etsy dükkanı \n{tarih} tarihinde yapılan kontrolde {satisstr} adet satış yapmıştır.")
 
-satisadet = icerik.find("span", {"class":"wt-text-caption wt-no-wrap"}).text.split()
 
-satisstr = satisadet[0].replace(',','')
-    #ucretDonusturen = int(ucreti[1:6].replace('.',''))
-#print(satisstr)
+  
 
-print(f"{dukkanadi} Etsy dükkanı {satisstr} adet satış yapmıştır.")
-
-   # if(ucretDonusturen < 8000):
-      #  print(f"{ucretDonusturen} TL {urunAdi} fiyatı düştü acele et!!!")
-    #else:
-     #   print(f"{ucretDonusturen} TL {urunAdi} henüz düşmedi")
-
-#while(True):
- #   urunKontrolEt()
-  #  time.sleep(3)
+while(True):
+  salechecker()
+  time.sleep(60*60*24)
 
 
 
